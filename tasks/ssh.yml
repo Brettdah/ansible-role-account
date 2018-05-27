@@ -6,6 +6,7 @@
   with_items:
     - boto
     - boto3
+  when: account_ssh_aws == true
 
 - name: create SSH config files
   template:
@@ -55,6 +56,7 @@
     owner: "{{ account_s3_tmp_path_owner|default('root') }}"
     group: "{{ account_s3_tmp_path_group|default('root') }}"
     state: directory
+  when: account_ssh_aws == true
 
 - name: download SSH authorized_keys from files on AWS S3
   aws_s3:
@@ -70,6 +72,7 @@
     - "{{ account_url_authorized_keys }}"
     - s3
     - { skip_missing: True }
+  when: account_ssh_aws == true
 
 - name: get content from downloaded S3 SSH authorized_keys files
   slurp:
@@ -79,6 +82,7 @@
     - "{{ account_url_authorized_keys }}"
     - s3
     - { skip_missing: True }
+  when: account_ssh_aws == true
 
 - name: Set up SSH authorized_keys from files on AWS S3
   authorized_key:
@@ -86,6 +90,7 @@
     key: "{{ item.content | b64decode  }}"
     state: present
   with_items: "{{ account_s3_ssh_content.results }}"
+  when: account_ssh_aws == true
 
 - name: create ssh keys directory for keys to copy
   file:
