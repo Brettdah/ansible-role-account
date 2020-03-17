@@ -1,8 +1,15 @@
 ---
+- name: create default user group
+  group:
+    name: "{{ item.value.group }}"
+    system: "no"
+    state: present
+  loop: "{{ account_users|dict2items }}"
+
 - name: create groups
   group: 
     name: "{{ item.key }}"
     system: "{{ item.value.system | default('no') }}"
     gid: "{{ item.value.gid|default(omit) }}"
     state: present
-  with_dict: "{{ account_groups }}"
+  loop: "{{ account_groups|dict2items }}"
