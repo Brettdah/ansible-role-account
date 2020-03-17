@@ -1,11 +1,8 @@
 ---
 - name: install Python AWS SDK boto
   pip:
-    name: "{{ item }}"
+    name: ['boto', 'boto3']
     state: present
-  with_items:
-    - boto
-    - boto3
   when: account_ssh_aws == true
 
 - name: create SSH config files
