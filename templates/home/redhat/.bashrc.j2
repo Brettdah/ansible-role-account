@@ -75,7 +75,7 @@ fi
 
 {% if item.0.name is defined %}
 # environment variables
-{%   for key,value in (account_env_vars[item.0.name]|default({})).iteritems() %}
-export {{ key|upper }}="{{ value }}"
+{%   for item in (account_env_vars[item.0.name]|default({}))|dict2items %}
+export {{ item.key|upper }}="{{ item.value }}"
 {%   endfor %}
 {% endif %}
