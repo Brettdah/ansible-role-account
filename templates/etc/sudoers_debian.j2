@@ -17,7 +17,7 @@ Defaults	secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/b
 
 # Cmnd alias specification
 
-{% for key,value in sudo_cmd_aliases.iteritems() %}
+{% for key,value in sudo_cmd_aliases.items() %}
 Cmnd_Alias {{ key }} = {{ value }}
 {% endfor %}
 
