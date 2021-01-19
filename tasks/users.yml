@@ -1,5 +1,5 @@
 ---
-- name: get git bash prompt
+- name: User | get git bash prompt
   git:
     repo: "{{ account_git_bash_prompt_repo_url }}"
     dest: /opt/bash-git-prompt
@@ -8,7 +8,7 @@
     update: no
 
 # create or update a user
-- name: create users
+- name: User | create users
   user:
     name: "{{ item.value.name }}"
     comment: "{{ item.value.comment | default(item.value.name) }}"
@@ -22,14 +22,14 @@
   with_dict: "{{ account_users }}"
 
 # add a ! at the beginning of hashed password to lock it
-- name: set user password
+- name: User | set user password
   user:
     name: "{{ item.value.name }}"
     password: "{{ ('!' if item.value.lock|default(false) else '' ) ~ (account_user_passwords[item.value.name] |password_hash('sha512', item.value.salt|default(None))) }}"
   when: not item.value.no_password|default(false) and account_user_passwords[item.value.name] is defined
   with_dict: "{{ account_users }}"
 
-- name: chmod homes
+- name: User | chmod homes
   file:
     path: "{{ (item.value.home|default('/home/' ~ item.value.name )) }}"
     mode: "{{ item.value.home_mode|default('u=rwx,g=rx,o=rx') }}"
@@ -39,7 +39,7 @@
   when: not item.value.no_chown_home|default(false)
   with_dict: "{{ account_users }}"
 
-- name: copy root home config files
+- name: User | copy root home config files
   template:
     src: "{{ item.src }}"
     dest: "/root/{{ item.dest|default(item.src | basename | regex_replace('\\.j2', '') ) }}"
@@ -51,7 +51,7 @@
   with_items: "{{ root_templates }}"
   when: item.src is not none
 
-- name: copy home config files
+- name: User | copy home config files
   template:
     src: "{{ item.1.src }}"
     dest: "{{ item.0.home|default('/home/' ~ item.0.name) }}/{{ item.1.dest|default(item.1.src | basename | regex_replace('\\.j2', '') ) }}"
@@ -66,7 +66,7 @@
     - { skip_missing: True }
   when: item.1.src is not none
 
-- name: set git configuration
+- name: User | set git configuration
   git_config:
     name: "{{ item.1.name }}"
     value: "{{ item.1.option }}"
